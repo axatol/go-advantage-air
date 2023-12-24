@@ -20,7 +20,8 @@ func mockServer(t *testing.T) *httptest.Server {
 			t.Fatalf("failed to read mock data: %s", err)
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write(raw)
+		_, err = w.Write(raw)
+		assert.NoError(t, err)
 	}))
 	mux.Handle("/setAircon", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		raw, err := os.ReadFile("mockdata/setAircon.json")
@@ -28,11 +29,13 @@ func mockServer(t *testing.T) *httptest.Server {
 			t.Fatalf("failed to read mock data: %s", err)
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write(raw)
+		_, err = w.Write(raw)
+		assert.NoError(t, err)
 	}))
 	mux.Handle("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Advantage Air v15.1378"))
+		_, err := w.Write([]byte("Advantage Air v15.1378"))
+		assert.NoError(t, err)
 	}))
 	server := httptest.NewServer(mux)
 	t.Cleanup(server.Close)
