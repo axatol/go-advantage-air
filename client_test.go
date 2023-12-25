@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func mockServer(t *testing.T) *httptest.Server {
+func mockAdvantageAirHubServer(t *testing.T) *httptest.Server {
 	t.Helper()
 	mux := http.NewServeMux()
 	mux.Handle("/getSystemData", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -42,17 +42,25 @@ func mockServer(t *testing.T) *httptest.Server {
 	return server
 }
 
+func TestGetSystemInfo(t *testing.T) {
+	server := mockAdvantageAirHubServer(t)
+	client := advantageair.NewClient(server.URL, 0)
+	ctx := context.Background()
+	_, err := client.GetSystemData(ctx)
+	assert.NoError(t, err)
+}
+
 func TestGetSystemData(t *testing.T) {
-	server := mockServer(t)
-	client := advantageair.NewClient(server.URL)
+	server := mockAdvantageAirHubServer(t)
+	client := advantageair.NewClient(server.URL, 0)
 	ctx := context.Background()
 	_, err := client.GetSystemData(ctx)
 	assert.NoError(t, err)
 }
 
 func TestSetAircon(t *testing.T) {
-	server := mockServer(t)
-	client := advantageair.NewClient(server.URL)
+	server := mockAdvantageAirHubServer(t)
+	client := advantageair.NewClient(server.URL, 0)
 	ctx := context.Background()
 	err := client.SetAircon(ctx, advantageair.NewChange())
 	assert.NoError(t, err)
